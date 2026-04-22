@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postzegel Combinaties — €2,11</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f5f0e8;
+    --paper: #fdfaf4;
+    --ink: #1a1209;
+    --muted: #6b5f4a;
+    --border: #c8bfa8;
+    --accent: #b5451b;
+    --c-green:  #1e7a3a; --bg-green:  #d4edda;
+    --c-lgreen: #4faa5c; --bg-lgreen: #e8f5db;
+    --c-yellow: #c4a010; --bg-yellow: #fff8cc;
+    --c-orange: #d4620a; --bg-orange: #fde8d2;
+    --c-red:    #c0272a; --bg-red:    #fce0e0;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 20% 10%, rgba(181,69,27,0.04) 0%, transparent 50%),
+      radial-gradient(circle at 80% 90%, rgba(79,170,92,0.04) 0%, transparent 50%);
+    font-family: 'DM Sans', sans-serif;
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    background: var(--paper);
+    border-bottom: 3px solid var(--border);
+    padding: 2.5rem 2rem 2rem;
+    position: relative;
+    text-align: center;
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; left: 0; right: 0;
+    height: 10px;
+    background: radial-gradient(circle at center, var(--bg) 5px, transparent 5px) 0 0 / 20px 10px repeat-x;
+  }
+  .stamp-frame {
+    display: inline-block;
+    border: 3px solid var(--accent);
+    padding: 1rem 2rem 0.8rem;
+    margin-bottom: 1rem;
+    position: relative;
+  }
+  .stamp-frame::before, .stamp-frame::after {
+    content: '✦'; position: absolute; color: var(--accent); font-size: 0.7rem; top: 6px;
+  }
+  .stamp-frame::before { left: 8px; }
+  .stamp-frame::after  { right: 8px; }
+  h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    letter-spacing: -0.01em; line-height: 1.1; color: var(--ink);
+  }
+  h1 span { color: var(--accent); font-style: italic; }
+  .subtitle {
+    color: var(--muted); font-size: 0.95rem; margin-top: 0.5rem;
+    font-weight: 300; letter-spacing: 0.05em; text-transform: uppercase;
+  }
+
+  .stats-bar {
+    display: flex; justify-content: center; gap: 1.5rem;
+    flex-wrap: wrap; padding: 1.8rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .stat-card {
+    background: var(--paper); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0.8rem 1.4rem;
+    text-align: center; min-width: 130px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .stat-card .num {
+    font-family: 'DM Mono', monospace; font-size: 2rem;
+    font-weight: 500; color: var(--accent); display: block;
+  }
+  .stat-card .lbl { font-size: 0.78rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .controls {
+    display: flex; justify-content: center; align-items: center;
+    gap: 0.6rem; padding: 1.2rem 2rem; flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+  .controls label { font-size: 0.85rem; color: var(--muted); font-weight: 500; letter-spacing: 0.03em; }
+  .btn-group {
+    display: flex; border: 1px solid var(--border); border-radius: 4px; overflow: hidden;
+  }
+  .btn-group button {
+    padding: 0.45rem 1.1rem; border: none; background: var(--paper); color: var(--muted);
+    font-family: 'DM Mono', monospace; font-size: 0.85rem; cursor: pointer;
+    transition: background 0.15s, color 0.15s; border-right: 1px solid var(--border);
+  }
+  .btn-group button:last-child { border-right: none; }
+  .btn-group button.active { background: var(--accent); color: #fff; }
+  .btn-group button:hover:not(.active) { background: var(--bg); }
+  .search-wrap { position: relative; }
+  .search-wrap input {
+    padding: 0.45rem 1rem 0.45rem 2rem; border: 1px solid var(--border);
+    border-radius: 4px; background: var(--paper); font-family: 'DM Sans', sans-serif;
+    font-size: 0.85rem; color: var(--ink); width: 180px; outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-wrap input:focus { border-color: var(--accent); }
+  .search-wrap::before {
+    content: '🔍'; position: absolute; left: 0.5rem; top: 50%;
+    transform: translateY(-50%); font-size: 0.75rem;
+  }
+
+  .legend {
+    display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;
+    padding: 0.8rem 2rem; border-bottom: 1px solid var(--border); background: var(--paper);
+  }
+  .legend-item { display: flex; align-items: center; gap: 0.4rem; font-size: 0.78rem; color: var(--muted); }
+  .legend-dot { width: 12px; height: 12px; border-radius: 2px; flex-shrink: 0; }
+
+  .main { padding: 1.5rem 1.5rem 2rem; max-width: 1200px; margin: 0 auto; }
+  #combo-count {
+    text-align: center; font-size: 0.82rem; color: var(--muted);
+    margin-bottom: 1rem; font-style: italic;
+  }
+  #grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 0.75rem;
+  }
+  .combo-card {
+    border-radius: 5px; padding: 0.75rem 1rem; border-left: 4px solid;
+    font-family: 'DM Mono', monospace;
+    transition: transform 0.12s, box-shadow 0.12s; cursor: default;
+  }
+  .combo-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .combo-card.tier-1 { background: var(--bg-green);  border-color: var(--c-green);  }
+  .combo-card.tier-2 { background: var(--bg-lgreen); border-color: var(--c-lgreen); }
+  .combo-card.tier-3 { background: var(--bg-yellow); border-color: var(--c-yellow); }
+  .combo-card.tier-4 { background: var(--bg-orange); border-color: var(--c-orange); }
+  .combo-card.tier-5 { background: var(--bg-red);    border-color: var(--c-red);    }
+  .combo-stamps { display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem; }
+  .stamp-pill {
+    display: inline-block; background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(0,0,0,0.1); border-radius: 3px;
+    padding: 0.15rem 0.4rem; font-size: 0.78rem; font-weight: 500;
+  }
+  .stamp-pill.multi { font-weight: 600; }
+  .combo-times {
+    font-size: 0.68rem;
+    color: var(--muted);
+    font-family: 'DM Mono', monospace;
+  }
+  .combo-meta {
+    font-size: 0.68rem; color: var(--muted); letter-spacing: 0.02em;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 0.2rem;
+  }
+  .badge {
+    display: inline-block; padding: 0.1rem 0.4rem; border-radius: 20px;
+    font-size: 0.65rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .tier-1 .badge { background: var(--c-green);  color: #fff; }
+  .tier-2 .badge { background: var(--c-lgreen); color: #fff; }
+  .tier-3 .badge { background: var(--c-yellow); color: #fff; }
+  .tier-4 .badge { background: var(--c-orange); color: #fff; }
+  .tier-5 .badge { background: var(--c-red);    color: #fff; }
+  .no-results {
+    text-align: center; padding: 3rem; color: var(--muted);
+    font-style: italic; grid-column: 1/-1;
+  }
+
+  /* ── STOCK SECTION ── */
+  .stock-section { max-width: 1200px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  .section-title {
+    font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--muted);
+    margin-bottom: 0.75rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+  }
+  .edit-btn {
+    font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
+    padding: 0.3rem 0.8rem; border-radius: 4px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--paper); color: var(--muted);
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .edit-btn:hover, .edit-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* Normal stock view */
+  .stock-grid { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .stock-item {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 4px;
+    padding: 0.4rem 0.8rem; font-family: 'DM Mono', monospace; font-size: 0.82rem;
+    display: flex; flex-direction: column; align-items: center; gap: 0.1rem; min-width: 70px;
+  }
+  .stock-item .val { font-weight: 500; color: var(--ink); }
+  .stock-item .qty { font-size: 0.7rem; color: var(--muted); }
+
+  /* Edit view */
+  .stock-edit-grid { display: none; flex-direction: column; gap: 0.75rem; }
+  .stock-edit-grid.visible { display: flex; }
+  .edit-note { font-size: 0.8rem; color: var(--muted); font-style: italic; }
+
+  .stock-rows { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: flex-start; }
+  .stock-row {
+    background: var(--paper); border: 1px solid var(--border); border-radius: 5px;
+    padding: 0.55rem 0.7rem; display: flex; flex-direction: column;
+    align-items: center; gap: 0.4rem; min-width: 88px;
+    font-family: 'DM Mono', monospace;
+  }
+  .stock-row .row-val { font-size: 0.78rem; color: var(--muted); }
+  .qty-controls { display: flex; align-items: center; gap: 0.3rem; }
+  .qty-btn {
+    width: 24px; height: 24px; border-radius: 3px; border: 1px solid var(--border);
+    background: var(--bg); cursor: pointer; font-size: 1rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--ink); transition: background 0.1s; padding: 0; line-height: 1;
+  }
+  .qty-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .qty-display {
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    min-width: 34px; text-align: center; color: var(--ink); font-weight: 500;
+    cursor: pointer; border-bottom: 1px dashed var(--border); padding-bottom: 1px;
+  }
+  .qty-display:hover { border-color: var(--accent); color: var(--accent); }
+  .qty-input {
+    font-family: 'DM Mono', monospace; font-size: 0.85rem;
+    width: 50px; text-align: center; padding: 0.1rem 0.2rem;
+    border: 1px solid var(--accent); border-radius: 3px;
+    background: var(--paper); color: var(--ink); outline: none;
+  }
+  .remove-btn {
+    font-size: 0.63rem; color: var(--c-red); cursor: pointer; border: none;
+    background: none; padding: 0; opacity: 0.55; font-family: 'DM Sans', sans-serif;
+  }
+  .remove-btn:hover { opacity: 1; }
+
+  .add-stamp-row {
+    display: flex; align-items: center; gap: 0.5rem;
+    flex-wrap: wrap; padding: 0.75rem 1rem;
+    background: var(--paper); border: 1px dashed var(--border);
+    border-radius: 5px;
+  }
+  .add-stamp-row label { font-size: 0.8rem; color: var(--muted); white-space: nowrap; }
+  .add-stamp-row input {
+    font-family: 'DM Mono', monospace; font-size: 0.82rem;
+    width: 72px; padding: 0.3rem 0.4rem; border: 1px solid var(--border);
+    border-radius: 3px; background: var(--bg); color: var(--ink); outline: none; text-align: center;
+  }
+  .add-stamp-row input:focus { border-color: var(--accent); }
+  .add-stamp-btn {
+    padding: 0.3rem 0.9rem; background: var(--accent); color: #fff;
+    border: none; border-radius: 3px; cursor: pointer; font-size: 0.8rem;
+    font-family: 'DM Sans', sans-serif; white-space: nowrap;
+  }
+  .add-stamp-btn:hover { opacity: 0.88; }
+
+  .recalc-toast {
+    display: inline-block; font-size: 0.75rem; color: var(--c-green);
+    font-style: italic; opacity: 0; transition: opacity 0.3s;
+  }
+  .recalc-toast.show { opacity: 1; }
+
+  footer {
+    text-align: center; padding: 1.5rem; color: var(--muted);
+    font-size: 0.78rem; border-top: 1px solid var(--border); background: var(--paper);
+  }
+
+  @media (max-width: 600px) {
+    .stats-bar { gap: 0.8rem; }
+    .stat-card { min-width: 100px; }
+    #grid { grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+    .combo-card { padding: 0.6rem 0.7rem; }
+    .stamp-pill { font-size: 0.72rem; padding: 0.1rem 0.3rem; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stamp-frame">
+    <h1>Postzegel Combinaties<br><span>€ 2,11</span></h1>
+  </div>
+  <p class="subtitle">Nederland · Combinaties van jouw postzegels · Totaal = €2,11</p>
+</header>
+
+<div class="stats-bar">
+  <div class="stat-card"><span class="num" id="s3">—</span><span class="lbl">Max 3 zegels</span></div>
+  <div class="stat-card"><span class="num" id="s4">—</span><span class="lbl">Max 4 zegels</span></div>
+  <div class="stat-card"><span class="num" id="s5">—</span><span class="lbl">Max 5 zegels</span></div>
+</div>
+
+<div class="controls">
+  <label>Max zegels:</label>
+  <div class="btn-group">
+    <button onclick="setMax(3)" id="btn3">3</button>
+    <button onclick="setMax(4)" id="btn4">4</button>
+    <button onclick="setMax(5)" id="btn5" class="active">5</button>
+  </div>
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="Zoek waarde… bijv. 1,00" oninput="render()">
+  </div>
+  <label style="margin-left:0.5rem;">Sorteren:</label>
+  <div class="btn-group">
+    <button onclick="setSort('freq')" id="sortFreq" class="active">Frequentie</button>
+    <button onclick="setSort('n')" id="sortN">Zegels</button>
+  </div>
+</div>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-green)"></div> Meest gebruikelijk</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-lgreen)"></div> Vrij gebruikelijk</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-yellow)"></div> Gemiddeld</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-orange)"></div> Minder gebruikelijk</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--c-red)"></div> Zeldzaam</div>
+</div>
+
+<div class="main">
+  <div id="combo-count"></div>
+  <div id="grid"></div>
+</div>
+
+<div class="stock-section">
+  <div class="section-title">
+    <span>📦 Jouw postzegel voorraad <span class="recalc-toast" id="toast">✓ Herberekend</span></span>
+    <button class="edit-btn" id="editBtn" onclick="toggleEdit()">✏️ Voorraad aanpassen</button>
+  </div>
+
+  <!-- Normal view -->
+  <div class="stock-grid" id="stock-grid"></div>
+
+  <!-- Edit view -->
+  <div class="stock-edit-grid" id="stock-edit-grid">
+    <div class="edit-note">Klik <strong>+</strong> / <strong>−</strong> om de voorraad aan te passen, of klik op het getal om het direct in te typen. Combinaties worden live herberekend.</div>
+    <div class="stock-rows" id="stock-rows"></div>
+    <div class="add-stamp-row">
+      <label>Nieuwe waarde:</label>
+      <input type="text" id="new-val" placeholder="bijv. 0,85" />
+      <label>Aantal:</label>
+      <input type="number" id="new-qty" placeholder="50" min="0" style="width:58px"/>
+      <button class="add-stamp-btn" onclick="addStamp()">+ Toevoegen</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Alle combinaties die optellen tot precies €2,11 · Maximaal gebruik van jouw eigen voorraad gerespecteerd
+</footer>
+
+<script>
+// ── STOCK ─────────────────────────────────────────────────────────────────────
+// cents → qty (999 = unlimited / "50+")
+const UNLIMITED = 999;
+let stock = {
+  2:999, 3:999, 5:999, 29:73, 34:7, 39:109, 44:78,
+  54:5, 61:13, 65:2, 72:1, 75:2, 77:7, 78:3,
+  81:3, 88:2, 95:4, 100:75
+};
+
+function fmt(cents) {
+  return '€\u202f' + (cents/100).toFixed(2).replace('.', ',');
+}
+function fmtQty(v) {
+  return stock[v] >= UNLIMITED ? '50+' : stock[v] + '×';
+}
+
+// ── COMBINATION ENGINE ────────────────────────────────────────────────────────
+const TARGET = 211;
+
+function computeCombos(maxN) {
+  const vals = Object.keys(stock).map(Number).filter(v => stock[v] > 0).sort((a,b)=>a-b);
+  const results = [];
+  function recurse(start, current, remaining, count) {
+    if (remaining === 0) { results.push([...current]); return; }
+    if (count === maxN) return;
+    for (let i = start; i < vals.length; i++) {
+      const v = vals[i];
+      if (v > remaining) break;
+      let used = 0;
+      for (const x of current) if (x === v) used++;
+      const avail = stock[v] >= UNLIMITED ? 999 : stock[v];
+      if (used >= avail) continue;
+      current.push(v);
+      recurse(i, current, remaining - v, count + 1);
+      current.pop();
+    }
+  }
+  recurse(0, [], TARGET, 0);
+  return results;
+}
+
+let allCombos = [];
+
+function recompute() {
+  allCombos = computeCombos(5);
+  updateStats();
+  render();
+  renderStockNormal();
+  showToast();
+}
+
+function updateStats() {
+  document.getElementById('s3').textContent = allCombos.filter(c=>c.length<=3).length;
+  document.getElementById('s4').textContent = allCombos.filter(c=>c.length<=4).length;
+  document.getElementById('s5').textContent = allCombos.length;
+}
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  clearTimeout(t._to);
+  t._to = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// ── TIER / COLOUR ─────────────────────────────────────────────────────────────
+function comboFreq(combo) {
+  return combo.reduce((s,v) => s + Math.min(stock[v]||0, 50), 0) - combo.length * 20;
+}
+function maxTimes(combo) {
+  const counts = {};
+  combo.forEach(v => counts[v] = (counts[v]||0)+1);
+  return Math.min(...Object.entries(counts).map(([v,n]) => {
+    const avail = stock[v] >= UNLIMITED ? 999 : (stock[v]||0);
+    return Math.floor(avail / n);
+  }));
+}
+function computeTiers(combos) {
+  if (!combos.length) return [];
+  const freqs = combos.map(comboFreq);
+  const minF = Math.min(...freqs), range = Math.max(...freqs) - minF || 1;
+  return freqs.map(f => {
+    const n = (f-minF)/range;
+    return n>=0.78?1 : n>=0.55?2 : n>=0.35?3 : n>=0.18?4 : 5;
+  });
+}
+const tierLabel = ['','Meest gebruikelijk','Vrij gebruikelijk','Gemiddeld','Minder gebruikelijk','Zeldzaam'];
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let maxStamps = 5, sortMode = 'freq', editMode = false;
+
+function setMax(n) {
+  maxStamps = n;
+  document.querySelectorAll('.btn-group button[id^=btn]').forEach(b=>b.classList.remove('active'));
+  document.getElementById('btn'+n).classList.add('active');
+  render();
+}
+function setSort(m) {
+  sortMode = m;
+  document.getElementById('sortFreq').classList.toggle('active', m==='freq');
+  document.getElementById('sortN').classList.toggle('active', m==='n');
+  render();
+}
+
+// ── RENDER COMBOS ─────────────────────────────────────────────────────────────
+function render() {
+  const q = document.getElementById('search').value.toLowerCase().replace(',','.');
+  let combos = allCombos.filter(c => c.length <= maxStamps);
+  if (q) {
+    const needle = parseFloat(q);
+    if (!isNaN(needle)) combos = combos.filter(c => c.some(v => Math.abs(v/100-needle)<0.001));
+  }
+  if (sortMode==='freq') combos.sort((a,b)=>comboFreq(b)-comboFreq(a));
+  else combos.sort((a,b)=>a.length-b.length||comboFreq(b)-comboFreq(a));
+
+  document.getElementById('combo-count').textContent =
+    combos.length + ' combinatie' + (combos.length!==1?'s':'') + ' gevonden';
+
+  const tiers = computeTiers(combos);
+  const grid = document.getElementById('grid');
+  if (!combos.length) { grid.innerHTML='<div class="no-results">Geen combinaties gevonden.</div>'; return; }
+  grid.innerHTML = combos.map((combo,i) => {
+    const t = tiers[i];
+    const counts = {};
+    combo.forEach(v => counts[v]=(counts[v]||0)+1);
+    const pills = Object.entries(counts).map(([v,n])=>
+      `<span class="stamp-pill${n>1?' multi':''}">${n>1?n+'×':''}${fmt(+v)}</span>`
+    ).join('');
+    const mt = maxTimes(combo);
+    const mtLabel = mt >= 50 ? '50+×' : mt + '×';
+    return `<div class="combo-card tier-${t}">
+      <div class="combo-stamps">${pills}</div>
+      <div class="combo-meta">
+        <span>${combo.length} zegel${combo.length!==1?'s':''}</span>
+        <span class="combo-times" title="Hoe vaak je deze combinatie kunt maken">🔢 ${mtLabel} mogelijk</span>
+        <span class="badge">${tierLabel[t]}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── STOCK: NORMAL VIEW ────────────────────────────────────────────────────────
+function renderStockNormal() {
+  document.getElementById('stock-grid').innerHTML =
+    Object.keys(stock).map(v =>
+      `<div class="stock-item">
+        <span class="val">${fmt(+v)}</span>
+        <span class="qty">${fmtQty(+v)}</span>
+      </div>`
+    ).join('');
+}
+
+// ── STOCK: EDIT VIEW ──────────────────────────────────────────────────────────
+function renderStockEdit() {
+  document.getElementById('stock-rows').innerHTML =
+    Object.keys(stock).map(v => {
+      const disp = stock[v] >= UNLIMITED ? '50+' : String(stock[v]);
+      return `<div class="stock-row" id="row-${v}">
+        <span class="row-val">${fmt(+v)}</span>
+        <div class="qty-controls">
+          <button class="qty-btn" onclick="adjustQty(${v},-1)">−</button>
+          <span class="qty-display" id="disp-${v}" onclick="startTyping(${v})" title="Klik om te typen">${disp}</span>
+          <button class="qty-btn" onclick="adjustQty(${v},+1)">+</button>
+        </div>
+        <button class="remove-btn" onclick="removeStamp(${v})">✕ verwijder</button>
+      </div>`;
+    }).join('');
+}
+
+function adjustQty(v, delta) {
+  let q = stock[v] >= UNLIMITED ? 50 : stock[v];
+  q = Math.max(0, q + delta);
+  stock[v] = q;
+  // update display span if visible (not in typing mode)
+  const el = document.getElementById('disp-'+v);
+  if (el && el.tagName === 'SPAN') el.textContent = q >= UNLIMITED ? '50+' : String(q);
+  recompute();
+}
+
+function startTyping(v) {
+  const el = document.getElementById('disp-'+v);
+  if (!el || el.tagName === 'INPUT') return;
+  const cur = stock[v] >= UNLIMITED ? 50 : stock[v];
+  el.outerHTML = `<input class="qty-input" id="disp-${v}" type="number" min="0" value="${cur}"
+    onblur="finishTyping(${v})" onkeydown="if(event.key==='Enter'||event.key==='Tab')finishTyping(${v})" />`;
+  document.getElementById('disp-'+v).select();
+}
+
+function finishTyping(v) {
+  const inp = document.getElementById('disp-'+v);
+  if (!inp || inp.tagName !== 'INPUT') return;
+  let val = parseInt(inp.value, 10);
+  if (isNaN(val) || val < 0) val = 0;
+  stock[v] = val;
+  const disp = val >= UNLIMITED ? '50+' : String(val);
+  inp.outerHTML = `<span class="qty-display" id="disp-${v}" onclick="startTyping(${v})" title="Klik om te typen">${disp}</span>`;
+  recompute();
+}
+
+function removeStamp(v) {
+  delete stock[v];
+  recompute();
+  renderStockEdit();
+}
+
+function addStamp() {
+  const rawVal = document.getElementById('new-val').value.trim().replace(',','.');
+  const rawQty = document.getElementById('new-qty').value.trim();
+  const cents = Math.round(parseFloat(rawVal) * 100);
+  const qty   = rawQty === '' ? 1 : parseInt(rawQty, 10);
+  if (isNaN(cents) || cents <= 0) { alert('Voer een geldige waarde in, bijv. 0,85'); return; }
+  if (isNaN(qty) || qty < 0)     { alert('Voer een geldig aantal in'); return; }
+  stock[cents] = qty;
+  // re-sort by value
+  const sorted = Object.entries(stock).map(([k,v])=>[+k,v]).sort((a,b)=>a[0]-b[0]);
+  stock = Object.fromEntries(sorted);
+  document.getElementById('new-val').value = '';
+  document.getElementById('new-qty').value = '';
+  recompute();
+  renderStockEdit();
+}
+
+// ── EDIT TOGGLE ───────────────────────────────────────────────────────────────
+function toggleEdit() {
+  editMode = !editMode;
+  const btn     = document.getElementById('editBtn');
+  const normal  = document.getElementById('stock-grid');
+  const editDiv = document.getElementById('stock-edit-grid');
+  if (editMode) {
+    btn.textContent = '✓ Klaar';
+    btn.classList.add('active');
+    normal.style.display = 'none';
+    editDiv.classList.add('visible');
+    renderStockEdit();
+  } else {
+    btn.textContent = '✏️ Voorraad aanpassen';
+    btn.classList.remove('active');
+    normal.style.display = '';
+    editDiv.classList.remove('visible');
+    renderStockNormal();
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+recompute();
+</script>
+</body>
+</html>
